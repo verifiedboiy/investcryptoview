@@ -26,15 +26,31 @@ for f in (USERS_FILE, DEPOSITS_FILE, LOGS_FILE):
             # for users we will treat as dict later, but [] is fine initial
             json.dump({}, _f)
 
-GMAIL_USER = os.environ.get("GMAIL_USER", "cs4146669@gmail.com")
-GMAIL_PASS = os.environ.get("GMAIL_PASS", "idodwjvnxopzrasr")
-
-
 def send_email(to_email, subject, html_body):
-    # TEMP: fake email sender for testing on Render
-    print("FAKE EMAIL ->", to_email, "| subject:", subject)
-    # We pretend it always worked
-    return True
+    import smtplib
+    from email.mime.text import MIMEText
+
+    smtp_server = os.environ.get("BREVO_SMTP_SERVER")
+    smtp_port = int(os.environ.get("BREVO_SMTP_PORT", 587))
+    smtp_login = os.environ.get("BREVO_SMTP_LOGIN")
+    smtp_password = os.environ.get("BREVO_SMTP_PASSWORD")
+    sender_email = os.environ.get("SENDER_EMAIL", "Noreply InvestCryptoView <cs4146669@gmail.com>")
+
+    msg = MIMEText(html_body, "html")
+    msg["Subject"] = subject
+    msg["From"] = sender_email
+    msg["To"] = to_email
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_login, smtp_password)
+            server.sendmail(sender_email, to_email, msg.as_string())
+        print(f"✅ Email sent to {to_email}")
+        return True
+    except Exception as e:
+        print("❌ Email error:", e)
+        return False
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as fh:
@@ -163,20 +179,6 @@ def admin_required(fn):
             return redirect(url_for("admin_login", next=request.path))
         return fn(*a, **kw)
     return wrapper
-
-def send_email(to_email, subject, message):
-    msg = MIMEText(message, "html")
-    msg["Subject"] = subject
-    msg['From'] = "Noreply InvestCryptoView <cs4146669@gmail.com>"
-    msg["To"] = to_email
-
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(SENDER_EMAIL, APP_PASSWORD)
-            server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
-        print(f"✅ Email sent to {to_email}")
-    except Exception as e:
-        print(f"❌ Email failed: {e}")
 
 def build_broadcast_email_html(username, subject, message):
     """Nice HTML layout for admin broadcast emails (no code box, no security tip)."""
