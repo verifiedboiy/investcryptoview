@@ -1,0 +1,29 @@
+{% extends "base_auth.html" %}
+{% block content %}
+
+<div class="signup-container">
+  <h2><i class="fa-solid fa-key"></i> Reset Password</h2>
+
+  {% if error %}
+    <div class="flash" style="color:red;">{{ error }}</div>
+  {% elif message %}
+    <div class="flash" style="color:green;">{{ message }}</div>
+  {% endif %}
+
+  <form method="POST" class="signup-form">
+    <div class="input-box">
+      <i class="fa-solid fa-envelope"></i>
+      <input type="email" name="email" placeholder="Enter your email" required>
+    </div>
+
+    <button type="submit">
+      <i class="fa-solid fa-paper-plane"></i> Send Reset Code
+    </button>
+
+    <p class="small-text">
+      Remember your password? <a href="{{ url_for('login') }}" class="blue">Log in</a>
+    </p>
+  </form>
+</div>
+
+{% endblock %}

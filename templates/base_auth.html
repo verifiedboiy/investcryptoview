@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvestCryptoView | Account</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="auth-body">
+
+  <!-- Simple logo on top -->
+  <div class="auth-header">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="auth-logo">
+    <h1>InvestCryptoView</h1>
+  </div>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 InvestCryptoView | All Rights Reserved</p>
+  </footer>
+
+</body>
+</html>

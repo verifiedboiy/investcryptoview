@@ -1,0 +1,53 @@
+{% extends "base_auth.html" %}
+{% block content %}
+
+<div class="signup-container">
+  <h2><i class="fa-solid fa-right-to-bracket"></i> Log In</h2>
+
+  {% if error %}
+    <div class="flash" style="color:red;">{{ error }}</div>
+  {% elif message %}
+    <div class="flash" style="color:green;">{{ message }}</div>
+  {% endif %}
+
+<div id="loading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+  <form method="POST" class="signup-form">
+
+    <div class="input-box">
+      <i class="fa-solid fa-envelope"></i>
+      <input type="email" name="email" placeholder="Email Address" required>
+    </div>
+
+    <div class="input-box">
+      <i class="fa-solid fa-lock"></i>
+      <input type="password" name="password" placeholder="Password" required>
+    </div>
+
+    <div class="checkbox" style="justify-content: space-between; width: 100%;">
+      <label><input type="checkbox" name="remember"> Remember me</label>
+      <a href="{{ url_for('forgot') }}" class="red" style="font-size: 14px;">Forgot password?</a>
+    </div>
+
+    <button type="submit">
+      <i class="fa-solid fa-right-to-bracket"></i> Login
+    </button>
+
+    <p class="small-text">
+      Don’t have an account? <a href="{{ url_for('signup') }}" class="blue">Create one</a>
+    </p>
+
+  </form>
+</div>
+<script>
+const form = document.querySelector('form');
+const loader = document.getElementById('loading');
+form.addEventListener('submit', () => {
+  loader.style.display = 'flex';
+  setTimeout(() => { loader.style.display = 'none'; }, 2000);
+});
+</script>
+
+{% endblock %}

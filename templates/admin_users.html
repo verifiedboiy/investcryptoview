@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin — Users</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      color: #0f172a;
+    }
+    .wrap {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #1e293b;
+      color: #cbd5e1;
+      padding: 16px;
+    }
+    .sidebar div {
+      font-weight: 800;
+      color: #fff;
+      font-size: 18px;
+    }
+    .main {
+      padding: 22px;
+    }
+    h2 {
+      margin-bottom: 16px;
+    }
+    form {
+      margin-bottom: 12px;
+    }
+    input[name="q"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+    button {
+      padding: 8px 14px;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .table {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 10px 30px rgba(2,8,23,.06);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 700;
+    }
+    td a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    td a:hover {
+      text-decoration: underline;
+    }
+    .btn-delete {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      background: #ef4444;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-delete:hover {
+      background: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="sidebar">
+      <div>Admin</div>
+    </aside>
+    <main class="main">
+      <h2>Users</h2>
+      <form method="get">
+        <input name="q" placeholder="Search by id or name" value="{{ q }}">
+        <button>Search</button>
+      </form>
+      <div class="table">
+        <table width="100%" border="0" cellpadding="8">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Action</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for u in users %}
+            <tr>
+              <td>{{ u.id }}</td>
+              <td>{{ u.name }}</td>
+              <td>
+                <a href="{{ url_for('admin_view_user', user_id=u.id) }}">View</a>
+              </td>
+              <td>
+                <form method="POST"
+                      action="{{ url_for('admin_delete_user', user_id=u.id) }}"
+                      onsubmit="return confirm('Delete this user permanently?');">
+                  <button type="submit" class="btn-delete">
+                    <i class="fa-solid fa-trash"></i> Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

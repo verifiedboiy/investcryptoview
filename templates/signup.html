@@ -1,0 +1,83 @@
+{% extends "base_auth.html" %}
+{% block content %}
+<div class="signup-container">
+  <h2><i class="fa-solid fa-user-plus"></i> Create Account</h2>
+  <form method="POST" class="signup-form">
+    
+    <div class="input-box">
+      <i class="fa-solid fa-id-card"></i>
+      <input type="text" name="fullname" placeholder="Full Name" required>
+    </div>
+
+    <div class="input-box">
+      <i class="fa-solid fa-user"></i>
+      <input type="text" name="username" placeholder="Username" required>
+    </div>
+    {% if error_username %}
+      <p style="color:#ff4d4d; font-size:13px; margin-top:-8px;">{{ error_username }}</p>
+    {% endif %}
+
+    <div class="input-box">
+      <i class="fa-solid fa-envelope"></i>
+      <input type="email" name="email" placeholder="Email Address" required>
+    </div>
+    {% if error_email %}
+      <p style="color:#ff4d4d; font-size:13px; margin-top:-8px;">{{ error_email }}</p>
+    {% endif %}
+
+    <div class="input-box">
+      <i class="fa-solid fa-phone"></i>
+      <input type="tel" name="phone" placeholder="Phone Number" required>
+    </div>
+
+    <div class="input-box">
+      <i class="fa-solid fa-globe"></i>
+      <select name="country" required>
+        <option value="" disabled selected>Select Country</option>
+        <option value="United States">United States</option>
+        <option value="Australia">Australia</option>
+        <option value="Germany">Germany</option>
+        <option value="Spain">Spain</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="Canada">Canada</option>
+        <option value="India">India</option>
+      </select>
+    </div>
+
+    <div class="input-box password-box">
+      <i class="fa-solid fa-lock"></i>
+      <input type="password" id="password" name="password" placeholder="Password" required oninput="checkStrength(this.value)">
+      <span id="strength">Strength: Weak</span>
+    </div>
+
+    <label class="checkbox">
+      <input type="checkbox" required> I agree to the 
+      <a href="#" class="terms">Terms and Conditions</a>
+    </label>
+
+    <button type="submit">
+      <i class="fa-solid fa-user-check"></i> Register
+    </button>
+
+    <p class="small-text">
+      Already have an account? <a href="/login" class="blue">Log in</a>
+    </p>
+  </form>
+</div>
+
+<script>
+function checkStrength(password) {
+  const strength = document.getElementById("strength");
+  if (password.length > 8 && /[A-Z]/.test(password) && /\d/.test(password)) {
+    strength.textContent = "Strength: Strong";
+    strength.style.color = "lime";
+  } else if (password.length > 5) {
+    strength.textContent = "Strength: Medium";
+    strength.style.color = "orange";
+  } else {
+    strength.textContent = "Strength: Weak";
+    strength.style.color = "red";
+  }
+}
+</script>
+{% endblock %}

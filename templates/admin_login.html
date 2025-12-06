@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Admin Login</title></head>
+<body style="font-family:Inter,Arial">
+  <h2>Admin login</h2>
+  <form method="post">
+    <input type="password" name="password" placeholder="Admin password" />
+    <button>Sign in</button>
+  </form>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat,msg in messages %}<div>{{msg}}</div>{% endfor %}{% endif %}
+  {% endwith %}
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Edit Profile — InvestCryptoView</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root {
+  --sidebar:#1e293b; --primary:#2563eb; --page:#f1f5f9; --card:#fff;
+  --radius:14px; --shadow:0 10px 30px rgba(2,8,23,.08);
+}
+body { margin:0; background:var(--page); font-family:Inter,system-ui; color:#0f172a; }
+.wrap { display:grid; grid-template-columns:260px 1fr; min-height:100vh; }
+.sidebar { background:var(--sidebar); color:#cbd5e1; padding:16px 0; }
+.brand { display:flex; align-items:center; gap:10px; color:#fff; font-weight:800; font-size:18px; padding:0 22px 14px; }
+.brand i { color:var(--primary); }
+.nav a { display:flex; align-items:center; gap:12px; padding:12px 22px; border-left:4px solid transparent; }
+.nav a:hover { background:#334155; color:#fff; border-left-color:var(--primary); }
+
+.main { background:#fff; padding:22px 28px; box-shadow:inset 0 0 0 1px #e2e8f0; }
+.card {
+  background:var(--card); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:22px; max-width:600px;
+  margin:auto; text-align:center;
+}
+input {
+  width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:10px;
+  font-size:1rem; margin-bottom:14px; outline:none;
+}
+.btn {
+  width:100%; padding:12px; background:var(--primary); border:none;
+  border-radius:10px; color:#fff; font-weight:700; cursor:pointer;
+  transition:.3s;
+}
+.btn:hover { opacity:0.9; transform:scale(1.03); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="brand"><i class="fa-solid fa-chart-line"></i>InvestCryptoView</div>
+  </aside>
+
+  <main class="main">
+    <div class="card">
+      <h2>Edit Profile</h2>
+      <form action="{{ url_for('edit_profile') }}" method="POST">
+        <input type="text" name="username" placeholder="New Username" required />
+        <input type="password" name="password" placeholder="New Password" required />
+        <button class="btn" type="submit"><i class="fa-solid fa-save"></i> Save Changes</button>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

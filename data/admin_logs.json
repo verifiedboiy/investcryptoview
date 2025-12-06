@@ -1,0 +1,77 @@
+[
+  {
+    "time": "2025-12-05T08:08:36.320547",
+    "action": "kyc_approved",
+    "details": "user:5241ecfe"
+  },
+  {
+    "time": "2025-12-05T08:08:37.467685",
+    "action": "kyc_approved",
+    "details": "user:04092df4"
+  },
+  {
+    "time": "2025-12-05T08:08:38.677327",
+    "action": "kyc_declined",
+    "details": "user:5e9aa678"
+  },
+  {
+    "time": "2025-12-05T08:08:38.994778",
+    "action": "kyc_declined",
+    "details": "user:bac06d7e"
+  },
+  {
+    "time": "2025-12-05T08:08:39.276073",
+    "action": "kyc_declined",
+    "details": "user:1c6c1bb4"
+  },
+  {
+    "time": "2025-12-05T08:08:39.574929",
+    "action": "kyc_declined",
+    "details": "user:49421f10"
+  },
+  {
+    "time": "2025-12-05T08:08:39.879054",
+    "action": "kyc_declined",
+    "details": "user:3542bed0"
+  },
+  {
+    "time": "2025-12-05T08:08:40.150283",
+    "action": "kyc_declined",
+    "details": "user:8402f6f7"
+  },
+  {
+    "time": "2025-12-05T08:08:40.458606",
+    "action": "kyc_declined",
+    "details": "user:fdb35f0d"
+  },
+  {
+    "time": "2025-12-05T08:08:40.760774",
+    "action": "kyc_declined",
+    "details": "user:f76ad4c5"
+  },
+  {
+    "time": "2025-12-05T08:08:41.057678",
+    "action": "kyc_declined",
+    "details": "user:d475036d"
+  },
+  {
+    "time": "2025-12-05T08:08:41.347260",
+    "action": "kyc_declined",
+    "details": "user:f27d4b91"
+  },
+  {
+    "time": "2025-12-05T08:08:41.679300",
+    "action": "kyc_declined",
+    "details": "user:f7a156cf"
+  },
+  {
+    "time": "2025-12-05T08:08:42.007797",
+    "action": "kyc_declined",
+    "details": "user:d3382f72"
+  },
+  {
+    "time": "2025-12-05T08:08:42.330307",
+    "action": "kyc_declined",
+    "details": "user:060699dc"
+  }
+]

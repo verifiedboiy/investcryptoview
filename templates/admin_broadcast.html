@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Broadcast Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            padding: 40px;
+        }
+        .box {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 22px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            background: #334155;
+            color: white;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            margin-top: 20px;
+            background: #2563eb;
+            padding: 12px 18px;
+            border: none;
+            font-size: 16px;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: .9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Send Broadcast Email</h2>
+
+    <form method="POST">
+        <label>Subject:</label>
+        <input type="text" name="subject" required>
+
+        <label>Message:</label>
+        <textarea name="message" rows="10" required></textarea>
+
+        <button type="submit">Send Email</button>
+    </form>
+</div>
+
+</body>
+</html>

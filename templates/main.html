@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InvestCryptoView Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #1e293b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 10px 0 0 10px;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding-left: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .nav {
+            margin-top: 30px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 25px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .nav a.active,
+        .nav a:hover {
+            background: #334155;
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+
+        .nav i {
+            font-size: 1.2rem;
+        }
+
+        .telegram {
+            background: #2563eb;
+            color: white;
+            padding: 10px 15px;
+            margin: 20px;
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .telegram i {
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            background: white;
+            border-radius: 0 10px 10px 0;
+            padding: 20px 40px;
+            box-shadow: inset 0 0 0 1px #e2e8f0;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 20px;
+        }
+
+        .topbar a {
+            color: #0f172a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .topbar i {
+            font-size: 1.8rem;
+            color: #1e293b;
+            cursor: pointer;
+        }
+
+        /* Dashboard Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .card.primary h2 {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+        .card p.profit {
+            color: #86efac;
+            font-weight: 500;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        /* Quick Actions */
+        .actions {
+            margin-top: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .actions h3 {
+            margin-bottom: 15px;
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn.buy {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn.sell {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn.deposit {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn.withdraw {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+          /* ...your existing styles... */
+
+  .user-id-widget {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    background: #0f172a;
+    color: #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    box-shadow: 0 10px 25px rgba(15,23,42,0.7);
+    z-index: 999;
+  }
+  .user-id-label {
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+    color: #9ca3af;
+  }
+  .user-id-value {
+    font-family: "JetBrains Mono", monospace;
+    background: #020617;
+    padding: 3px 6px;
+    border-radius: 6px;
+    border: 1px solid #1f2937;
+  }
+  .user-id-icon-btn {
+    border: none;
+    background: transparent;
+    color: #cbd5e1;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .user-id-icon-btn:hover {
+    background: rgba(148,163,184,0.2);
+  }
+  .user-id-toast {
+    position: fixed;
+    right: 20px;
+    bottom: 60px;
+    background: #22c55e;
+    color: #022c22;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    display: none;
+    z-index: 1000;
+  }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div>
+            <div class="logo">
+                <i class="fas fa-chart-line"></i> InvestCryptoView
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('main') }}" class="active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="{{ url_for('trades') }}"><i class="fas fa-exchange-alt"></i> Trades</a>
+                <a href="{{ url_for('deposit') }}"><i class="fas fa-plus-circle"></i> Deposit</a>
+                <a href="{{ url_for('withdraw') }}"><i class="fas fa-minus-circle"></i> Withdraw</a>
+                <a href="{{ url_for('kyc') }}"><i class="fas fa-id-card"></i> KYC</a>
+                <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About Us</a>
+                <a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact Us</a>
+            </div>
+        </div>
+        <a href="https://t.me/IFPBrokeragent" class="telegram" target="_blank">
+            <i class="fab fa-telegram"></i> Telegram
+        </a>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="topbar">
+            <a href="{{ url_for('profile') }}">Welcome, {{ username }}</a>
+            <a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i></a>
+        </div>
+
+        <div class="grid">
+            <div class="card primary">
+                <h3>Total Balance</h3>
+                <!-- backend balance from users.json, will be synced with localStorage -->
+                <h2 id="backendBalance">${{ "%.2f"|format(user.balance) }}</h2>
+                <p class="profit">+112.4%</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-wallet" style="color:var(--primary); font-size:2rem; margin-bottom:10px;"></i>
+                <h3>$8,210</h3>
+                <p>Available Margin</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-chart-pie" style="color:var(--primary); font-size:2rem; margin-bottom:10px;"></i>
+                <h3 id="openTrades">0</h3>
+                <p>Open Trades</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-trophy" style="color:var(--primary)"></i>
+                <h3 id="totalProfit">${{ "%.2f"|format(user.profit) }}</h3>
+                <p>Total Profit</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <i class="fas fa-shield-alt" style="color:var(--primary); font-size:2rem; margin-bottom:10px;"></i>
+            <h3>Verified</h3>
+            <p>KYC Status</p>
+        </div>
+
+        <div class="actions">
+            <h3>Quick Actions</h3>
+            <div class="btns">
+                <button class="btn buy"><i class="fas fa-arrow-up"></i> Buy</button>
+                <button class="btn sell"><i class="fas fa-arrow-down"></i> Sell</button>
+                <button class="btn deposit" onclick="location.href='{{ url_for('deposit') }}'"><i class="fas fa-plus"></i> Deposit</button>
+                <button class="btn withdraw" onclick="location.href='{{ url_for('withdraw') }}'"><i class="fas fa-minus"></i> Withdraw</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sync balance / profit / open trades with trades.html + backend -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const balanceEl = document.getElementById("backendBalance"); // Total Balance
+      const profitEl  = document.getElementById("totalProfit");    // Total Profit
+      const tradesEl  = document.getElementById("openTrades");     // Open Trades
+
+      // Backend values (from users.json, via Flask)
+      const backendBalance = parseFloat("{{ user.balance|default(0) }}") || 0;
+      const backendProfit  = parseFloat("{{ user.profit|default(0) }}") || 0;
+
+      function syncAll() {
+        // Read what trades.html writes
+        let bal    = parseFloat(localStorage.getItem("invest_balance"));
+        let prof   = parseFloat(localStorage.getItem("invest_profit"));
+        let trades = parseInt(localStorage.getItem("open_trades"));
+
+        // If nothing in localStorage (new user / first login), fall back to backend
+        if (isNaN(bal))    bal    = backendBalance;
+        if (isNaN(prof))   prof   = backendProfit;
+        if (isNaN(trades)) trades = 0;
+
+        // Write to DOM
+        if (balanceEl) {
+          balanceEl.textContent =
+            "$" + bal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+        }
+        if (profitEl) {
+          profitEl.textContent =
+            "$" + prof.toLocaleString(undefined, { minimumFractionDigits: 2 });
+        }
+        if (tradesEl) {
+          tradesEl.textContent = trades;
+        }
+
+        // Also push backend value into localStorage once, so trades page starts from admin amount
+        if (!localStorage.getItem("invest_balance") && backendBalance > 0) {
+          localStorage.setItem("invest_balance", backendBalance.toFixed(2));
+        }
+        if (!localStorage.getItem("invest_profit") && backendProfit > 0) {
+          localStorage.setItem("invest_profit", backendProfit.toFixed(2));
+        }
+      }
+
+      // Initial sync
+      syncAll();
+
+      // Update when another tab/page changes storage
+      window.addEventListener("storage", (e) => {
+        if (["invest_balance", "invest_profit", "open_trades"].includes(e.key)) {
+          syncAll();
+        }
+      });
+
+      // And every 2s for safety (keeps main + trades in sync)
+      setInterval(syncAll, 2000);
+    });
+    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  // current logged in email from Flask session
+  const currentEmail = "{{ session.get('email', '') }}";
+  const lastEmail = localStorage.getItem("logged_email");
+
+  // if a different user has logged in on this browser, wipe old values
+  if (lastEmail && lastEmail !== currentEmail) {
+    localStorage.removeItem("invest_balance");
+    localStorage.removeItem("invest_profit");
+    localStorage.removeItem("open_trades");
+  }
+
+  // remember who is currently logged in
+  localStorage.setItem("logged_email", currentEmail);
+});
+</script>
+<div class="user-id-widget" id="userIdWidget">
+  <span class="user-id-label">User ID</span>
+  <span class="user-id-value" id="userIdValue">{{ user_id or 'N/A' }}</span>
+
+  <!-- Copy icon -->
+  <button class="user-id-icon-btn" id="copyUserIdBtn" title="Copy User ID">
+    <i class="fa-regular fa-copy"></i>
+  </button>
+
+  <!-- Info icon -->
+  <button class="user-id-icon-btn" id="infoUserIdBtn" title="What is this ID?">
+    <i class="fa-solid fa-circle-info"></i>
+  </button>
+
+  <!-- Close (X) -->
+  <button class="user-id-icon-btn" id="closeUserIdBtn" title="Hide">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
+
+<div class="user-id-toast" id="userIdToast">
+  User ID copied
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const copyBtn   = document.getElementById("copyUserIdBtn");
+    const infoBtn   = document.getElementById("infoUserIdBtn");
+    const closeBtn  = document.getElementById("closeUserIdBtn");
+    const widget    = document.getElementById("userIdWidget");
+    const toast     = document.getElementById("userIdToast");
+    const userId    = "{{ user_id or '' }}";
+
+    function showToast(msg) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 2000);
+    }
+
+    // Copy icon
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        if (!userId) return;
+        try {
+          await navigator.clipboard.writeText(userId);
+          showToast("User ID copied");
+        } catch (err) {
+          console.error(err);
+          showToast("Unable to copy");
+        }
+      });
+    }
+
+    // Info icon: 20-second explanation
+    if (infoBtn) {
+      infoBtn.addEventListener("click", () => {
+        const msg = `
+Your User ID is a unique identifier for your InvestCryptoView account.
+
+Our support team may ask for this ID when:
+• Verifying deposits or withdrawals
+• Resolving login or KYC issues
+• Tracking activity on your account
+
+Keep it private and only share it with official InvestCryptoView support.
+        `.trim();
+
+        const box = document.createElement("div");
+        box.style.position = "fixed";
+        box.style.right = "20px";
+        box.style.bottom = "90px";
+        box.style.maxWidth = "300px";
+        box.style.background = "#020617";
+        box.style.color = "#e5e7eb";
+        box.style.border = "1px solid #4b5563";
+        box.style.borderRadius = "12px";
+        box.style.padding = "10px 12px";
+        box.style.fontSize = "12px";
+        box.style.lineHeight = "1.5";
+        box.style.zIndex = "1001";
+        box.id = "userIdInfoBox";
+
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <strong style="font-size:12px;">About your User ID</strong>
+            <button id="userIdInfoClose"
+                    style="border:none;background:transparent;color:#9ca3af;cursor:pointer;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div style="white-space:pre-wrap;">${msg}</div>
+        `;
+
+        // Remove any previous info box
+        const existing = document.getElementById("userIdInfoBox");
+        if (existing) existing.remove();
+
+        document.body.appendChild(box);
+
+        const closeInfo = () => {
+          const el = document.getElementById("userIdInfoBox");
+          if (el) el.remove();
+        };
+
+        document.getElementById("userIdInfoClose")
+          .addEventListener("click", closeInfo);
+
+        // Auto-hide after 20 seconds
+        setTimeout(closeInfo, 20000);
+      });
+    }
+
+    // Close widget entirely
+    if (closeBtn && widget) {
+      closeBtn.addEventListener("click", () => {
+        widget.style.display = "none";
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

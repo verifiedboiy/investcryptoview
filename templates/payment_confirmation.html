@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmation - InvestCryptoView</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background: #0b1220;
+      color: #e5e7eb;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #131b2e;
+      border-radius: 14px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      padding: 30px;
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+    }
+    h2 {
+      color: #3b82f6;
+      margin-bottom: 10px;
+    }
+    .amount {
+      color: #22c55e;
+      font-size: 1.1rem;
+      margin: 8px 0;
+    }
+    .address-box {
+      background: #0b1220;
+      border: 1px solid #334155;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: #3b82f6;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .copy-btn:hover { opacity: 0.8; }
+    .note {
+      text-align: left;
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-top: 10px;
+    }
+    .note i {
+      color: #3b82f6;
+      margin-right: 6px;
+    }
+    .btn {
+      background: #22c55e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #16a34a;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Payment Confirmation</h2>
+    <p>Your Order No. <b>{{ order_no }}</b> has been placed successfully.</p>
+    <p class="amount">
+      Please send <b>{{ amount }}</b> {{ asset }} ({{ network }}) to the address below.
+    </p>
+
+    <div class="address-box">
+      <span id="walletAddress"></span>
+      <button class="copy-btn" onclick="copyAddress()"><i class="fa-regular fa-copy"></i></button>
+    </div>
+
+    <div class="note">
+      <p><i class="fa-solid fa-circle-exclamation"></i> Kindly ensure you select the correct network.</p>
+      <p><i class="fa-solid fa-circle-exclamation"></i> Send the exact amount added in your deposit.</p>
+      <p><i class="fa-solid fa-circle-question"></i> Can’t pay with crypto? Contact us on Telegram for another payment method.</p>
+    </div>
+
+    <button class="btn" onclick="confirmPayment()">I have made my payment</button>
+  </div>
+
+  <script>
+    // Crypto addresses
+    const addresses = {
+      BTC: "bc1q0x93ysaw9yf2gzsj6hfxa73yvcfmqftcqywrxs",
+      ETH: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826",
+      USDT: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826",
+      SOL: "XFPDNN9J9tzhESkWU88fVZX5QsQdda6W9x7yefhRXdR",
+      BNB: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826"
+    };
+
+    // Get asset name from Flask (convert to uppercase)
+    const asset = "{{ asset|upper }}";
+    const walletAddress = addresses[asset] || "Address not available";
+
+    document.getElementById("walletAddress").textContent = walletAddress;
+
+    function copyAddress() {
+      navigator.clipboard.writeText(walletAddress);
+      alert("Wallet address copied to clipboard!");
+    }
+
+    function confirmPayment() {
+      alert("✅ Payment submitted for review. Your balance will update once confirmed by our team.");
+
+      // 🔹 Read real values from the URL ?asset=BTC&network=TRC20&amount=100
+      const params  = new URLSearchParams(window.location.search);
+      const amount  = params.get("amount")  || "0";
+      const assetQ  = params.get("asset")   || "{{ asset|upper }}";
+      const network = params.get("network") || assetQ;
+      const method  = assetQ + " / " + network;   // e.g. BTC / TRC20
+      const txRef   = window.location.search || "";
+
+      // Send background email alert to admin
+      fetch("/api/deposit_notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: amount,
+          method: method,
+          tx_ref: txRef
+          user_id: "{{ session.get('user_id') }}"
+        })
+      }).catch(err => console.error("deposit_notify failed", err));
+    }
+</script>
+
+</body>
+</html>

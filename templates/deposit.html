@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InvestCryptoView — Deposit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root{
+      --sidebar:#1e293b; --primary:#2563eb; --page:#f1f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
+      --shadow:0 10px 30px rgba(2,8,23,.08); --radius:14px; --green:#10b981;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--page);color:var(--text);font:15px/1.45 Inter,system-ui}
+    .wrap{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{background:var(--sidebar);color:#cbd5e1;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:18px;padding:0 22px 14px}
+    .brand i{color:var(--primary)}
+    .nav a{display:flex;align-items:center;gap:12px;padding:12px 22px;border-left:4px solid transparent}
+    .nav a:hover,.nav a.active{background:#334155;color:#fff;border-left-color:var(--primary)}
+    .nav i{width:18px;text-align:center}
+    .telegram{display:flex;align-items:center;gap:8px;background:#229ED9;color:#fff;border-radius:999px;padding:10px 14px;margin:18px 22px;justify-content:center}
+    .main{background:#fff;padding:22px 28px;box-shadow:inset 0 0 0 1px #e2e8f0}
+    .topbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:18px}
+    .topbar i{font-size:1.8rem;color:#1f2937}
+    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .title{font-weight:800;margin-bottom:10px}
+
+    label{display:block;font-weight:700;margin:8px 0 6px}
+    select,input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font:inherit}
+    .asset-head{display:flex;align-items:center;gap:10px;margin:6px 0 12px}
+    .asset-head img{width:28px;height:28px;border-radius:6px}
+
+    .btn{padding:12px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
+    .btn.primary{background:var(--primary);color:#fff;width:100%}
+    .note{color:var(--muted)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand"><i class="fa-solid fa-chart-line"></i>InvestCryptoView</div>
+    <nav class="nav">
+      <a href="{{ url_for('main') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
+      <a href="{{ url_for('trades') }}"><i class="fa-solid fa-arrows-rotate"></i>Trades</a>
+      <a class="active" href="{{ url_for('deposit') }}"><i class="fa-solid fa-circle-plus"></i>Deposit</a>
+      <a href="{{ url_for('withdraw') }}"><i class="fa-solid fa-circle-minus"></i>Withdraw</a>
+      <a href="{{ url_for('kyc') }}"><i class="fa-solid fa-id-card"></i>KYC</a>
+      <a href="{{ url_for('about') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+      <a href="{{ url_for('contact') }}"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <!-- Telegram button at the bottom -->
+  <a href="https://t.me/IFPBrokeragent" class="telegram" target="_blank">
+    <i class="fab fa-telegram"></i> Telegram
+  </a>
+</aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <a href="{{ url_for('profile') }}">Welcome, {{ session.get('username','Investor') }}</a>
+      <a href="{{ url_for('profile') }}"><i class="fa-solid fa-user-circle"></i></a>
+    </div>
+
+    <div class="grid">
+      <!-- Deposit form -->
+      <div class="card">
+        <div class="title">Deposit</div>
+
+        <div class="asset-head">
+          <img id="assetLogo" src="https://cryptoicons.org/api/icon/btc/64" alt="logo">
+          <div><strong id="assetName">BTC</strong><div class="note">Choose asset & network</div></div>
+        </div>
+
+        <label for="asset">Asset</label>
+        <select id="asset">
+          <option value="BTC" data-logo="https://cryptoicons.org/api/icon/btc/64">BTC — Bitcoin</option>
+          <option value="ETH" data-logo="https://cryptoicons.org/api/icon/eth/64">ETH — Ethereum</option>
+          <option value="USDT" data-logo="https://cryptoicons.org/api/icon/usdt/64">USDT — Tether</option>
+          <option value="USDC" data-logo="https://cryptoicons.org/api/icon/usdc/64">USDC — USD Coin</option>
+          <option value="SOL" data-logo="https://cryptoicons.org/api/icon/sol/64">SOL — Solana</option>
+          <option value="BNB" data-logo="https://cryptoicons.org/api/icon/bnb/64">BNB — BNB</option>
+        </select>
+
+        <label for="network">Network</label>
+        <select id="network">
+          <option value="BTC">BTC</option>
+          <option value="ERC20">ERC20</option>
+          <option value="TRC20">TRC20</option>
+          <option value="BEP20">BEP20</option>
+          <option value="SOL">SOL</option>
+        </select>
+
+        <label for="amount">Amount (USD)</label>
+        <input id="amount" type="number" min="10" step="0.01" placeholder="e.g. 100.00"/>
+
+        <div style="margin-top:14px">
+          <button class="btn primary" id="makePayment"><i class="fa-solid fa-receipt"></i> Make Payment</button>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="card">
+        <div class="title">Tips</div>
+        <ul style="margin:8px 0 0 18px;color:#374151;line-height:1.6">
+          <li>Choose the correct network for your asset.</li>
+          <li>Send the exact amount you entered.</li>
+          <li>Funds appear after our team confirms your transaction.</li>
+          <li>Need help? Contact us on Telegram.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const assetSel = document.getElementById('asset');
+  const networkSel = document.getElementById('network');
+  const amount = document.getElementById('amount');
+  const assetLogo = document.getElementById('assetLogo');
+  const assetName = document.getElementById('assetName');
+  assetSel.addEventListener('change', ()=>{
+    assetLogo.src = assetSel.selectedOptions[0].dataset.logo;
+    assetName.textContent = assetSel.value;
+  });
+
+  document.getElementById('makePayment').addEventListener('click', ()=>{
+    const a = assetSel.value;
+    const n = networkSel.value;
+    const usd = parseFloat(amount.value||'0');
+    if(usd<=0){ alert('Enter a valid amount'); return; }
+    const url = "{{ url_for('payment_confirmation') }}?asset=" + 
+    encodeURIComponent(a) + 
+    "&network=" + encodeURIComponent(n) + 
+    "&amount=" + encodeURIComponent(usd.toFixed(2));
+    window.location = url;
+  });
+</script>
+</body>
+</html>

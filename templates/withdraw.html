@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InvestCryptoView — Withdraw</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{--sidebar:#1e293b;--primary:#2563eb;--page:#f1f5f9;--card:#fff;--text:#0f172a;--muted:#64748b;--radius:14px;--shadow:0 10px 30px rgba(2,8,23,.08);--red:#ef4444}
+body{margin:0;background:var(--page);font:15px/1.45 Inter,system-ui;color:var(--text)}
+.wrap{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:var(--sidebar);color:#cbd5e1;padding:16px 0}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:18px;padding:0 22px 14px}
+.brand i{color:var(--primary)}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 22px;border-left:4px solid transparent}
+.nav a:hover,.nav a.active{background:#334155;color:#fff;border-left-color:var(--primary)}
+.nav i{width:18px;text-align:center}
+.telegram{display:flex;align-items:center;gap:8px;background:#229ED9;color:#fff;border-radius:999px;padding:10px 14px;margin:18px 22px;justify-content:center}
+.main{background:#fff;padding:22px 28px;box-shadow:inset 0 0 0 1px #e2e8f0}
+.topbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:18px}
+.topbar i{font-size:1.8rem;color:#1f2937}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;max-width:640px}
+label{display:block;font-weight:700;margin:8px 0 6px}
+select,input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font:inherit}
+.btn{padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--primary);color:#fff;width:100%}
+.note{color:var(--muted);margin-top:10px}
+.success{display:none;margin-top:14px;border:1px solid #bbf7d0;background:#ecfdf5;color:#065f46;padding:12px;border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside class="sidebar">
+  <div class="brand"><i class="fa-solid fa-chart-line"></i>InvestCryptoView</div>
+  <nav class="nav">
+    <a href="{{ url_for('main') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
+    <a href="{{ url_for('trades') }}"><i class="fa-solid fa-arrows-rotate"></i>Trades</a>
+    <a href="{{ url_for('deposit') }}"><i class="fa-solid fa-circle-plus"></i>Deposit</a>
+    <a class="active" href="{{ url_for('withdraw') }}"><i class="fa-solid fa-circle-minus"></i>Withdraw</a>
+    <a href="{{ url_for('kyc') }}"><i class="fa-solid fa-id-card"></i>KYC</a>
+    <a href="{{ url_for('about') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+    <a href="{{ url_for('contact') }}"><i class="fa-solid fa-envelope"></i>Contact</a>
+  </nav>
+  <!-- Telegram button at the bottom -->
+  <a href="https://t.me/IFPBrokeragent" class="telegram" target="_blank">
+    <i class="fab fa-telegram"></i> Telegram
+  </a>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <a href="{{ url_for('profile') }}">Welcome, {{ session.get('username','Investor') }}</a>
+    <a href="{{ url_for('profile') }}"><i class="fa-solid fa-user-circle"></i></a>
+  </div>
+
+  <div class="card">
+    <h2>Withdrawal</h2>
+    <label>Asset</label>
+    <select id="asset">
+      <option>BTC</option><option>ETH</option><option>USDT</option><option>USDC</option><option>SOL</option><option>BNB</option>
+    </select>
+
+    <label>Network</label>
+    <select id="network">
+      <option>BTC</option><option>ERC20</option><option>TRC20</option><option>BEP20</option><option>SOL</option>
+    </select>
+
+    <label for="amount">Withdrawable Profit (USD)</label>
+<input id="amount"
+       type="number"
+       min="10"
+       step="0.01"
+       placeholder="Enter profit amount only">
+
+<small id="withdrawError"
+       style="display:block;margin-top:4px;color:#f97373;font-size:12px;">
+</small>
+
+    <label>Your Wallet Address</label>
+    <input id="address" placeholder="Paste your crypto address here"/>
+
+    <div style="margin:10px 0">
+      <input type="checkbox" id="confirm"/> <label for="confirm">I confirm my address before proceeding</label>
+    </div>
+
+    <button type="button"
+        id="proceedBtn"
+        class="primary-btn">
+  Proceed
+</button>
+  </div>
+</main>
+</div>
+
+<script>
+document.getElementById('proceed').onclick=()=>{
+ if(!document.getElementById('confirm').checked){alert('Please confirm your address.');return;}
+ document.getElementById('msg').style.display='block';
+}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const amountInput = document.getElementById("amount");
+  const proceedBtn  = document.getElementById("proceedBtn");
+  const errorEl     = document.getElementById("withdrawError");
+
+  if (!amountInput || !proceedBtn || !errorEl) return;
+
+  // 1. Read profit from localStorage (live from trades)
+  let lsProfit = parseFloat(localStorage.getItem("invest_profit"));
+  if (isNaN(lsProfit)) lsProfit = 0;
+
+  // 2. Fallback to backend profit from users.json
+  let backendProfit = parseFloat("{{ user.profit|default(0) }}");
+  if (isNaN(backendProfit)) backendProfit = 0;
+
+  // 3. Final available profit (use localStorage if it has value)
+  const availableProfit = lsProfit > 0 ? lsProfit : backendProfit;
+
+  // 4. Pre-fill the input with full profit
+  amountInput.value = availableProfit.toFixed(2);
+
+  function validate() {
+    const val = parseFloat(amountInput.value) || 0;
+
+    // Nothing / negative
+    if (val <= 0) {
+      errorEl.textContent = "Enter an amount greater than $0.00.";
+      proceedBtn.disabled = true;
+      return;
+    }
+
+    // Too high
+    if (val > availableProfit + 0.0001) {
+      errorEl.textContent = "Insufficient funds: you only have $" +
+        availableProfit.toFixed(2) + " profit available.";
+      proceedBtn.disabled = true;
+      return;
+    }
+
+    // OK
+    errorEl.textContent = "";
+    proceedBtn.disabled = false;
+  }
+
+  // First check + listen for changes
+  validate();
+  amountInput.addEventListener("input", validate);
+});
+</script>
+</body>
+</html>

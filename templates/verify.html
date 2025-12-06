@@ -1,0 +1,54 @@
+{% extends "base_auth.html" %}
+{% block content %}
+<div class="verify-container">
+  <h2>Email Verification</h2>
+  <p>We’ve sent a 6-digit verification code to <b>{{ email }}</b>. Please enter it below to verify your account.</p>
+
+  <form method="POST" class="verify-form">
+    <input type="text" name="code" placeholder="Enter 6-digit code" maxlength="6" required>
+    <button type="submit">Verify Email</button>
+  </form>
+
+  <p class="small-text">Didn’t receive the code? 
+    <a href="#" class="red" id="resend">Resend</a>
+  </p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash">{{ messages[0] }}</div>
+    {% endif %}
+  {% endwith %}
+</div>
+
+<script>
+const resend = document.getElementById("resend");
+let timer = null;
+
+resend.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (resend.classList.contains("disabled")) return;
+
+  resend.classList.add("disabled");
+  resend.style.pointerEvents = "none";
+  resend.style.color = "gray";
+
+  let countdown = 30;
+  resend.textContent = 'Resend (' + countdown + 's)';
+
+  // send the request to backend
+  await fetch("/resend");
+
+  timer = setInterval(() => {
+    countdown--;
+    resend.textContent = 'Resend (' + countdown + 's)';
+    if (countdown <= 0) {
+      clearInterval(timer);
+      resend.textContent = "Resend";
+      resend.classList.remove("disabled");
+      resend.style.pointerEvents = "auto";
+      resend.style.color = "red";
+    }
+  }, 1000);
+});
+</script>
+{% endblock %}

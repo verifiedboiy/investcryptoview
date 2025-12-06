@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InvestCryptoView — Trades</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root{
+      --sidebar:#1e293b; --primary:#2563eb; --page:#f1f5f9; --card:#ffffff;
+      --text:#0f172a; --muted:#64748b; --green:#10b981; --red:#ef4444; --shadow:0 10px 30px rgba(2,8,23,.08);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--page);color:var(--text);font:15px/1.45 Inter,system-ui,Segoe UI,Arial}
+    a{text-decoration:none;color:inherit}
+
+    .wrap{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{background:var(--sidebar);color:#cbd5e1;padding:16px 0 20px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:18px;padding:0 22px 14px}
+    .brand i{color:var(--primary)}
+    .nav a{display:flex;align-items:center;gap:12px;padding:12px 22px;border-left:4px solid transparent}
+    .nav a:hover,.nav a.active{background:#334155;color:#fff;border-left-color:var(--primary)}
+    .nav i{width:18px;text-align:center}
+    .telegram{display:flex;align-items:center;gap:8px;background:#229ED9;color:#fff;border-radius:999px;padding:10px 14px;margin:18px 22px 0;justify-content:center}
+
+    .main{background:#fff;border-radius:0 0 0 0;padding:22px 28px;box-shadow:inset 0 0 0 1px #e2e8f0}
+    .topbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:18px}
+    .topbar a{font-weight:600}
+    .topbar i{font-size:1.8rem;color:#1f2937}
+
+    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .title{font-weight:800;margin-bottom:10px}
+
+    .balance{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff}
+    .balance .big{font-size:36px;font-weight:900;margin:8px 0}
+    .note{color:#bfe0ff;font-weight:700}
+
+    .field{margin:10px 0}
+    label{display:block;font-weight:700;margin-bottom:6px;color:#111827}
+    select,input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font:inherit}
+    .asset-head{display:flex;align-items:center;gap:10px;margin:6px 0 12px}
+    .asset-head img{width:28px;height:28px;border-radius:6px}
+
+    .tabs{display:flex;gap:10px;margin-top:6px}
+    .tab{flex:1;text-align:center;padding:10px;border-radius:10px;font-weight:800;cursor:pointer}
+    .tab.buy{background:var(--green);color:#fff}
+    .tab.sell{background:var(--red);color:#fff}
+    .row{display:grid;grid-template-columns:1fr 140px;gap:10px;margin:10px 0}
+    .btn{padding:10px 14px;border-radius:10px;border:none;font-weight:800;cursor:pointer}
+    .btn.primary{background:var(--primary);color:#fff}
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:999px;padding:8px 12px}
+    .toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;display:none;gap:8px;align-items:center;box-shadow:var(--shadow)}
+    .toast.show{display:flex}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand"><i class="fa-solid fa-chart-line"></i>InvestCryptoView</div>
+    <nav class="nav">
+      <a href="{{ url_for('main') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
+      <a class="active" href="{{ url_for('trades') }}"><i class="fa-solid fa-arrows-rotate"></i>Trades</a>
+      <a href="{{ url_for('deposit') }}"><i class="fa-solid fa-circle-plus"></i>Deposit</a>
+      <a href="{{ url_for('withdraw') }}"><i class="fa-solid fa-circle-minus"></i>Withdraw</a>
+      <a href="{{ url_for('kyc') }}"><i class="fa-solid fa-id-card"></i>KYC</a>
+      <a href="{{ url_for('about') }}"><i class="fa-solid fa-circle-info"></i>About</a>
+      <a href="{{ url_for('contact') }}"><i class="fa-solid fa-envelope"></i>Contact</a>
+    </nav>
+    <a class="telegram" href="https://t.me/IFPBrokeragent" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <a href="{{ url_for('profile') }}">Welcome, {{ session.get('username','Investor') }}</a>
+      <a href="{{ url_for('profile') }}"><i class="fa-solid fa-user-circle"></i></a>
+    </div>
+
+    <div class="grid">
+      <!-- Balance -->
+      <div class="card balance">
+        <div class="title">Total Balance</div>
+        <div class="big" id="totalBalance">$25,430.75</div>
+        <div class="note">Live demo only — Buy/Sell updates this card locally</div>
+      </div>
+
+      <!-- Chosen asset -->
+      <div class="card">
+        <div class="title">Selected Asset</div>
+        <div class="asset-head">
+          <img id="assetLogo" src="https://cryptoicons.org/api/icon/btc/64" alt="logo">
+          <div><strong id="assetName">BTC</strong><div class="muted" style="color:#64748b">Bitcoin</div></div>
+        </div>
+        <span class="pill"><i class="fa-solid fa-circle-info"></i> Spot demo mode</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="title">Trade</div>
+      <div class="field">
+        <label for="asset">Asset</label>
+        <select id="asset">
+          <option value="BTC" data-name="Bitcoin" data-logo="https://cryptoicons.org/api/icon/btc/64">BTC — Bitcoin</option>
+          <option value="ETH" data-name="Ethereum" data-logo="https://cryptoicons.org/api/icon/eth/64">ETH — Ethereum</option>
+          <option value="XRP" data-name="XRP" data-logo="https://cryptoicons.org/api/icon/xrp/64">XRP — XRP</option>
+          <option value="SOL" data-name="Solana" data-logo="https://cryptoicons.org/api/icon/sol/64">SOL — Solana</option>
+          <option value="ADA" data-name="Cardano" data-logo="https://cryptoicons.org/api/icon/ada/64">ADA — Cardano</option>
+          <option value="DOGE" data-name="Dogecoin" data-logo="https://cryptoicons.org/api/icon/doge/64">DOGE — Dogecoin</option>
+        </select>
+      </div>
+
+      <div class="tabs">
+  <div class="tab buy"  id="tabBuy"  onclick="setSide('BUY')"><i class="fa-solid fa-arrow-up"></i> Buy</div>
+  <div class="tab sell" id="tabSell" onclick="setSide('SELL')"><i class="fa-solid fa-arrow-down"></i> Sell</div>
+</div>
+
+      <div class="row">
+        <div>
+          <label for="usd">Amount (USD)</label>
+          <input id="usd" type="number" min="0" step="0.01" placeholder="e.g. 250.00"/>
+        </div>
+        <div style="align-self:end">
+          <button type="button" class="btn primary" id="submitTrade" onclick="handleTrade()">
+  <i class="fa-solid fa-check"></i> Confirm
+</button>
+        </div>
+      </div>
+      <span class="pill" id="preview"><i class="fa-solid fa-chart-line"></i> Ready</span>
+    </div>
+
+    <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastText">Trade submitted</span></div>
+  </main>
+</div>
+
+<script>
+  const assetSel = document.getElementById('asset');
+  const assetLogo = document.getElementById('assetLogo');
+  const assetName = document.getElementById('assetName');
+  const preview = document.getElementById('preview');
+  const totalBalanceEl = document.getElementById('totalBalance');
+  const usd = document.getElementById('usd');
+  const tabBuy = document.getElementById('tabBuy');
+  const tabSell = document.getElementById('tabSell');
+  const submitTrade = document.getElementById('submitTrade');
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toastText');
+  const USER_ID = "{{ user_id }}";
+
+  // === INFO ICON ===
+  const infoBtn = document.createElement("div");
+  infoBtn.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+  Object.assign(infoBtn.style, {
+    position: 'fixed', top: '22px', right: '28px', color: '#3b82f6',
+    fontSize: '20px', cursor: 'pointer', zIndex: 9999, animation: 'glow 1.5s infinite alternate'
+  });
+  document.body.appendChild(infoBtn);
+
+  const infoBox = document.createElement("div");
+  infoBox.innerHTML = `
+    <div style="position:fixed; top:80px; right:20px; background:#ffffff; color:#0f172a; 
+      border-radius:12px; box-shadow:0 5px 30px rgba(0,0,0,0.2); padding:20px; 
+      width:320px; max-width:90%; z-index:9999; display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h4 style="margin:0; font-weight:800; color:#2563eb;">Exclusive Investment Insights</h4>
+        <i id="closeInfo" class="fa-solid fa-xmark" style="cursor:pointer; color:#64748b;"></i>
+      </div>
+      <p style="font-size:14px; line-height:1.6; color:#334155;">
+        Dear Valued Client,<br><br>
+        At <b>InvestCryptoView</b>, we believe every investment decision should be driven by precision, timing, and opportunity.<br><br>
+        Whether you choose to buy or sell, your potential profit is directly tied to the strategic size of your position and the quality of your entry.<br><br>
+        Our proprietary signals and real-time market analysis are designed to help you maximize returns. The greater your committed capital—aligned with our expert recommendations—the greater your upside.
+      </p>
+    </div>
+  `;
+  document.body.appendChild(infoBox);
+
+  infoBtn.addEventListener("click", () => {
+    infoBox.children[0].style.display = 'block';
+    setTimeout(() => infoBox.children[0].style.display = 'none', 30000);
+  });
+  infoBox.querySelector('#closeInfo').addEventListener("click", () => {
+    infoBox.children[0].style.display = 'none';
+  });
+
+  // === KEYFRAMES FOR GLOW ===
+  const glowStyle = document.createElement('style');
+  glowStyle.textContent = `
+    @keyframes glow { from { text-shadow: 0 0 5px #2563eb; } to { text-shadow: 0 0 15px #60a5fa; } }
+  `;
+  document.head.appendChild(glowStyle);
+
+  // === FUNCTIONS ===
+  let side = 'BUY';
+  updatePreview();
+
+  function parseMoney(txt) {
+    return parseFloat(txt.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function fmt(n) {
+    return n.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+  }
+
+  function showToast(msg) {
+    toastText.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function updatePreview() {
+    const icon =
+      side === 'BUY'
+        ? '<i class="fa-solid fa-arrow-up"></i>'
+        : '<i class="fa-solid fa-arrow-down"></i>';
+    preview.innerHTML = icon + ' ' + side + ' ' + assetSel.value;
+  }
+
+  // === EVENT HANDLERS ===
+  assetSel.addEventListener('change', () => {
+    const opt = assetSel.selectedOptions[0];
+    assetLogo.src = opt.dataset.logo;
+    assetName.textContent = opt.value;
+    updatePreview();
+  });
+
+  tabBuy.addEventListener('click', () => {
+    side = 'BUY';
+    tabBuy.style.opacity = '1';
+    tabSell.style.opacity = '.8';
+    updatePreview();
+  });
+
+  tabSell.addEventListener('click', () => {
+    side = 'SELL';
+    tabSell.style.opacity = '1';
+    tabBuy.style.opacity = '.8';
+    updatePreview();
+  });
+
+  // === LOAD BALANCE FROM BACKEND + LOCALSTORAGE ===
+function loadBalance() {
+  const backendBal = parseFloat("{{ invest_balance or 0 }}");
+  const storedBal  = localStorage.getItem('invest_balance');
+
+  // if we already have a stored balance, use it
+  // otherwise start from backend (admin) balance
+  const effective = storedBal !== null ? parseFloat(storedBal) : backendBal;
+
+  totalBalanceEl.textContent = fmt(effective);
+  localStorage.setItem('invest_balance', effective.toFixed(2));
+}
+loadBalance();
+
+  // === CONFIRM TRADE ===
+  submitTrade.addEventListener('click', () => {
+    const amt = parseFloat(usd.value || '0');
+    if (amt <= 0) {
+      showToast('Enter a valid amount');
+      return;
+    }
+
+    let balance = parseMoney(totalBalanceEl.textContent);
+    if (amt > balance) {
+      showToast('Insufficient funds');
+      return;
+    }
+
+    // Deduct from balance for both BUY & SELL
+    balance -= amt;
+    totalBalanceEl.textContent = fmt(balance);
+
+    // Save to localStorage (for front-end demo)
+    localStorage.setItem('invest_balance', balance.toFixed(2));
+
+    // 🔥 Save to backend (users.json)
+    fetch("/api/update_balance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: USER_ID,
+        balance: balance,
+        profit: parseFloat(localStorage.getItem("invest_profit") || "0")
+      })
+    });
+
+    showToast(side + ' ' + assetSel.value + ' • ' + fmt(amt) + ' executed');
+
+    // Update open trades
+    let openTrades = parseInt(localStorage.getItem('open_trades') || '0');
+    openTrades += 1;
+    localStorage.setItem('open_trades', openTrades);
+
+    // Start profit simulation
+    startProfitGrowth(amt);
+
+    usd.value = '';
+  });
+
+  // === PROFIT GROWTH (18% PER HOUR DEMO, TICKING EVERY SECOND) ===
+function startProfitGrowth(amount) {
+    const profitKey = 'invest_profit';
+    let totalProfit = parseFloat(localStorage.getItem(profitKey) || '0');
+
+    // 18% per hour = 0.18 * amount per hour
+    // per second:
+    const profitPerSec = amount * 0.18 / 3600;
+    let secondsPassed = 0;
+
+    const interval = setInterval(() => {
+        secondsPassed++;
+        totalProfit += profitPerSec;
+        localStorage.setItem(profitKey, totalProfit.toFixed(2));
+
+        // Update live profit box if visible
+        const profitBox = document.getElementById('totalProfit');
+        if (profitBox) profitBox.textContent = '$' + Number(totalProfit).toLocaleString();
+
+        // 🔥 push NEW balance + NEW profit to backend
+        fetch("/api/update_balance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: USER_ID, // <-- already defined earlier in trades.html
+                balance: parseFloat(localStorage.getItem("invest_balance") || "0"),
+                profit: totalProfit
+            })
+        });
+
+        // stop after 12 hours
+        if (secondsPassed >= 43200) clearInterval(interval);
+    }, 1000);
+}
+
+  // === LIVE BALANCE + PROFIT SYNC WITH DASHBOARD ===
+  window.addEventListener('storage', () => {
+    const profitBox = document.getElementById('totalProfit');
+    const profitVal = parseFloat(localStorage.getItem('invest_profit') || '0');
+    if (profitBox) profitBox.textContent = '$' + profitVal.toLocaleString();
+
+    const balance = parseFloat(localStorage.getItem('invest_balance') || '25430.75');
+    if (totalBalanceEl) totalBalanceEl.textContent = fmt(balance);
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const currentEmail = "{{ session.get('email', '') }}";
+  const lastEmail = localStorage.getItem("logged_email");
+
+  if (lastEmail && lastEmail !== currentEmail) {
+    localStorage.removeItem("invest_balance");
+    localStorage.removeItem("invest_profit");
+    localStorage.removeItem("open_trades");
+  }
+
+  localStorage.setItem("logged_email", currentEmail);
+});
+</script>
+</body>
+</html>

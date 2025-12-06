@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin — User Details</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      margin: 0;
+      padding: 0;
+      color: #0f172a;
+    }
+    .wrap {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #020617;
+      color: #cbd5e1;
+      padding: 24px 20px;
+      box-shadow: 4px 0 18px rgba(0,0,0,0.45);
+    }
+    .sidebar h2 {
+      color: #f9fafb;
+      margin: 0 0 18px 0;
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .sidebar a {
+      color: #93c5fd;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+
+    .main {
+      padding: 28px 36px;
+      background: radial-gradient(circle at top left,#1e293b 0,#020617 50%,#020617 100%);
+      color: #e5e7eb;
+    }
+
+    .top-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 22px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: rgba(15,23,42,0.96);
+      padding: 20px 22px;
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.25);
+    }
+
+    .card h2 {
+      margin: 0 0 4px 0;
+      color: #e5e7eb;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .muted {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 28px;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+    .info-row p {
+      margin: 4px 0;
+    }
+    .info-label {
+      color: #9ca3af;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 2px;
+    }
+    .info-value {
+      font-weight: 600;
+      color: #e5e7eb;
+      word-break: break-all;
+    }
+
+    .divider {
+      height: 1px;
+      background: radial-gradient(circle,#111827,transparent);
+      margin: 18px 0;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+    input, select {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.4);
+    }
+
+    .adjust-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .chip-btn {
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 11px;
+      padding: 5px 9px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chip-btn span {
+      font-weight: 700;
+    }
+    .chip-btn:hover {
+      border-color: #2563eb;
+      color: #bfdbfe;
+    }
+
+    .kyc-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      background: rgba(37,99,235,0.15);
+      border: 1px solid rgba(129,140,248,0.45);
+      color: #c7d2fe;
+      margin-top: 4px;
+    }
+
+    .btn-primary {
+      padding: 11px 18px;
+      background: linear-gradient(135deg,#2563eb,#4f46e5);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 14px 35px rgba(37,99,235,0.55);
+      margin-top: 6px;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Admin Panel</h2>
+    <p><a href="{{ url_for('admin_users') }}">← Back to Users</a></p>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="top-title">User Management</div>
+
+    <div class="layout">
+      <!-- LEFT: USER OVERVIEW -->
+      <section class="card">
+        <h2>{{ user.full_name }}</h2>
+        <div class="muted">Full account overview</div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">User ID</div>
+            <div class="info-value">{{ user.id }}</div>
+          </div>
+          <div>
+            <div class="info-label">Email</div>
+            <div class="info-value">{{ user.email }}</div>
+          </div>
+          <div>
+            <div class="info-label">Country</div>
+            <div class="info-value">{{ user.country }}</div>
+          </div>
+          <div>
+            <div class="info-label">Last IP</div>
+            <div class="info-value">{{ user.location }}</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Current Snapshot</div>
+        <div class="info-row">
+          <div>
+            <div class="info-label">Balance ($)</div>
+            <div class="info-value">
+              {{ "%.2f"|format(user.balance|default(0)) }}
+            </div>
+          </div>
+          <div>
+            <div class="info-label">Total Profit ($)</div>
+            <div class="info-value">
+              {{ "%.2f"|format(user.profit|default(0)) }}
+            </div>
+          </div>
+          <div>
+            <div class="info-label">KYC</div>
+            <div class="info-value">
+              {{ user.kyc_status or "Pending" }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: EDIT CONTROLS -->
+      <section class="card">
+        <div class="section-title">Edit & Controls</div>
+       
+      <!-- DEBUG SYNC BOX -->
+<div class="card" style="margin-bottom: 20px; background:#111827; border:1px solid #334155;">
+  <h3 style="color:#93c5fd; margin-bottom:8px;">Sync Monitor</h3>
+
+  <p style="color:#e5e7eb; font-size:14px;">
+    <strong>Backend Balance:</strong> ${{ "%.2f"|format(user.balance) }}
+  </p>
+  <p style="color:#e5e7eb; font-size:14px;">
+    <strong>Backend Profit:</strong> ${{ "%.2f"|format(user.profit) }}
+  </p>
+
+  <hr style="border-color:#334155; margin:10px 0;">
+
+  <p style="color:#cbd5e1; font-size:14px;">
+    <strong>LocalStorage Balance:</strong>
+    <span id="lsBal">Loading…</span>
+  </p>
+  <p style="color:#cbd5e1; font-size:14px;">
+    <strong>LocalStorage Profit:</strong>
+    <span id="lsProf">Loading…</span>
+  </p>
+</div>
+
+        <form method="POST" action="{{ url_for('admin_update_user', user_id=user.id) }}">
+          <!-- BALANCE -->
+          <div class="form-group">
+            <label for="balanceInput">Balance ($)</label>
+            <input
+              id="balanceInput"
+              type="number"
+              step="0.01"
+              name="balance"
+              value="{{ user.balance|default(0) }}"
+            />
+            <div class="adjust-row">
+              <button type="button" class="chip-btn" onclick="adjustField('balanceInput', -100)">
+                −<span>100</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="adjustField('balanceInput', -10)">
+                −<span>10</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="adjustField('balanceInput', 10)">
+                +<span>10</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="adjustField('balanceInput', 100)">
+                +<span>100</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="setField('balanceInput', 0)">
+                <i class="fa-solid fa-rotate-left"></i><span>Reset</span>
+              </button>
+            </div>
+            <div class="hint">Use quick buttons or type any custom amount.</div>
+          </div>
+
+          <!-- PROFIT -->
+          <div class="form-group">
+            <label for="profitInput">Profit ($)</label>
+            <input
+              id="profitInput"
+              type="number"
+              step="any"
+              name="profit"
+              value="{{ user.profit|default(0) }}"
+            />
+            <div class="adjust-row">
+              <button type="button" class="chip-btn" onclick="adjustField('profitInput', -50)">
+                −<span>50</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="adjustField('profitInput', -10)">
+                −<span>10</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="adjustField('profitInput', 10)">
+                +<span>10</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="adjustField('profitInput', 50)">
+                +<span>50</span>
+              </button>
+              <button type="button" class="chip-btn" onclick="setField('profitInput', 0)">
+                <i class="fa-solid fa-rotate-left"></i><span>Reset</span>
+              </button>
+            </div>
+            <div class="hint">Instantly bump user profit up or down.</div>
+          </div>
+
+          <!-- KYC -->
+          <div class="form-group">
+            <label for="kyc_status">KYC Status</label>
+            <select id="kyc_status" name="kyc_status">
+              <option value="Pending"
+                {% if user.kyc_status == 'Pending' %}selected{% endif %}>Pending</option>
+              <option value="Approved"
+                {% if user.kyc_status == 'Approved' %}selected{% endif %}>Approved</option>
+              <option value="Declined"
+                {% if user.kyc_status == 'Declined' %}selected{% endif %}>Declined</option>
+            </select>
+            <div class="kyc-pill">
+              <i class="fa-solid fa-shield-check"></i>
+              Change status and press Update User
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Update User
+          </button>
+        </form>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+  function adjustField(id, delta) {
+    const input = document.getElementById(id);
+    if (!input) return;
+    let val = parseFloat(input.value || "0");
+    if (isNaN(val)) val = 0;
+    val += delta;
+    if (val < 0) val = 0;
+    input.value = val.toFixed(2);
+  }
+
+  function setField(id, value) {
+    const input = document.getElementById(id);
+    if (!input) return;
+    input.value = Number(value).toFixed(2);
+  }
+</script>
+<script>
+  // Show what is inside localStorage
+  function updateLocalBox() {
+    const lsBal = localStorage.getItem("invest_balance") || "0";
+    const lsProf = localStorage.getItem("invest_profit") || "0";
+
+    document.getElementById("lsBal").textContent = "$" + parseFloat(lsBal).toLocaleString();
+    document.getElementById("lsProf").textContent = "$" + parseFloat(lsProf).toLocaleString();
+  }
+
+  updateLocalBox();
+  setInterval(updateLocalBox, 2000);
+</script>
+<script>
+  // After this page loads, push backend numbers into localStorage
+  document.addEventListener("DOMContentLoaded", () => {
+    const backendBal  = parseFloat("{{ '%.2f'|format(user.balance) }}") || 0;
+    const backendProf = parseFloat("{{ '%.2f'|format(user.profit) }}") || 0;
+
+    // ✅ Update localStorage so Trades/Main pick it up
+    localStorage.setItem("invest_balance", backendBal.toFixed(2));
+    localStorage.setItem("invest_profit",  backendProf.toFixed(2));
+  });
+</script>
+</body>
+</html>
