@@ -27,7 +27,7 @@ for f in (USERS_FILE, DEPOSITS_FILE, LOGS_FILE):
             json.dump({}, _f)
 
 GMAIL_USER = os.environ.get("GMAIL_USER", "cs4146669@gmail.com")
-GMAIL_PASS = os.environ.get("GMAIL_PASS")  "idodwjvnxopzrasr"
+GMAIL_PASS = os.environ.get("GMAIL_PASS", "idodwjvnxopzrasr")
 
 
 def send_email(to_email, subject, html_body):
