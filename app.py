@@ -31,32 +31,10 @@ GMAIL_PASS = os.environ.get("GMAIL_PASS", "idodwjvnxopzrasr")
 
 
 def send_email(to_email, subject, html_body):
-    """
-    Safe email sender: 
-    - uses Gmail creds from environment
-    - never crashes the app if email fails
-    """
-    # If password is missing, just log and skip (prevents 500 on Render)
-    if not GMAIL_PASS:
-        print("WARN: GMAIL_PASS not set. Skipping real email send.")
-        print("Would have sent to:", to_email, "subject:", subject)
-        return
-
-    try:
-        msg = MIMEText(html_body, "html")
-        msg["Subject"] = subject
-        msg["From"] = GMAIL_USER
-        msg["To"] = to_email
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(GMAIL_USER, GMAIL_PASS)
-            server.sendmail(GMAIL_USER, [to_email], msg.as_string())
-
-        print("Email sent to", to_email)
-
-    except Exception as e:
-        # VERY important: don’t crash the request, just log the error
-        print("EMAIL ERROR:", e)
+    # TEMP: fake email sender for testing on Render
+    print("FAKE EMAIL ->", to_email, "| subject:", subject)
+    # We pretend it always worked
+    return True
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as fh:
