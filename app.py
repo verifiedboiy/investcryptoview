@@ -8,6 +8,8 @@ from pathlib import Path
 import json
 import csv
 from datetime import datetime
+from os import getenv
+    app.run(host="0.0.0.0", port=int(getenv("PORT", 5000)))
 
 SENDER_EMAIL = "cs4146669@gmail.com"
 APP_PASSWORD = "idodwjvnxopzrasr"
