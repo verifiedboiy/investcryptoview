@@ -11,5 +11,31 @@
         "location": "127.0.0.1",
         "kyc_status": "Pending",
         "registered_at": "2025-12-06 01:30:05"
+    },
+    "c9e6ae85": {
+        "id": "c9e6ae85",
+        "full_name": "yeghegh",
+        "username": "aeereer",
+        "email": "gggfvhvv@suiemail.com",
+        "phone": "1325262227",
+        "country": "United States",
+        "balance": 0.0,
+        "profit": 0.0,
+        "location": "127.0.0.1",
+        "kyc_status": "Pending",
+        "registered_at": "2025-12-07 21:30:27"
+    },
+    "04fd1717": {
+        "id": "04fd1717",
+        "full_name": "yeghegh",
+        "username": "aeereer",
+        "email": "gggfvhvv@suiemail.com",
+        "phone": "1325262227",
+        "country": "United States",
+        "balance": 0.0,
+        "profit": 0.0,
+        "location": "127.0.0.1",
+        "kyc_status": "Pending",
+        "registered_at": "2025-12-07 21:36:10"
     }
 }

@@ -9,9 +9,8 @@ import json
 import csv
 from datetime import datetime
 
-# === Email Setup ===
-SENDER_EMAIL = "cs4146669@gmail.com"  # replace with your Gmail
-APP_PASSWORD = "idodwjvnxopzrasr"     # your Google App Password
+SENDER_EMAIL = "cs4146669@gmail.com"
+APP_PASSWORD = "idodwjvnxopzrasr"
 
 # ---------- simple JSON storage helpers ----------
 USERS_FILE = "data/users.json"       # ensure data/ exists
@@ -30,11 +29,12 @@ def send_email(to_email, subject, html_body):
     import smtplib
     from email.mime.text import MIMEText
 
-    smtp_server = os.environ.get("BREVO_SMTP_SERVER")
-    smtp_port = int(os.environ.get("BREVO_SMTP_PORT", 587))
-    smtp_login = os.environ.get("BREVO_SMTP_LOGIN")
-    smtp_password = os.environ.get("BREVO_SMTP_PASSWORD")
-    sender_email = os.environ.get("SENDER_EMAIL", "Noreply InvestCryptoView <cs4146669@gmail.com>")
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_login = "cs4146669@gmail.com"
+    smtp_password = "idodwjvnxopzrasr"  # your Google App Password
+
+    sender_email = smtp_login
 
     msg = MIMEText(html_body, "html")
     msg["Subject"] = subject
@@ -46,8 +46,10 @@ def send_email(to_email, subject, html_body):
             server.starttls()
             server.login(smtp_login, smtp_password)
             server.sendmail(sender_email, to_email, msg.as_string())
+
         print(f"✅ Email sent to {to_email}")
         return True
+
     except Exception as e:
         print("❌ Email error:", e)
         return False
