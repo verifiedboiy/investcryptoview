@@ -8,7 +8,6 @@ from pathlib import Path
 import json
 import csv
 from datetime import datetime
-from os import getenv
 
 
 SENDER_EMAIL = "cs4146669@gmail.com"
@@ -1199,6 +1198,6 @@ def update_password():
 
     return render_template("update_password.html")
 
-if __name__ == "__main__":
-    app.run(debug=True)
-    app.run(host="0.0.0.0", port=int(getenv("PORT", 5000)))
+if _name_ == "_main_":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
