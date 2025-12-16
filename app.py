@@ -1,17 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, jsonify
 import random
-import smtplib
-from email.mime.text import MIMEText
 import os
 from functools import wraps
 from pathlib import Path
 import json
 import csv
 from datetime import datetime
-
-
-SENDER_EMAIL = "cs4146669@gmail.com"
-APP_PASSWORD = "idodwjvnxopzrasr"
 
 # ---------- simple JSON storage helpers ----------
 USERS_FILE = "data/users.json"       # ensure data/ exists
@@ -27,32 +21,38 @@ for f in (USERS_FILE, DEPOSITS_FILE, LOGS_FILE):
             json.dump({}, _f)
 
 def send_email(to_email, subject, html_body):
-    import smtplib
-    from email.mime.text import MIMEText
+    api_key = os.getenv("RESEND_API_KEY")
+    from_email = os.getenv("FROM_EMAIL")
 
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    smtp_login = "cs4146669@gmail.com"
-    smtp_password = "idodwjvnxopzrasr"  # your Google App Password
-
-    sender_email = smtp_login
-
-    msg = MIMEText(html_body, "html")
-    msg["Subject"] = subject
-    msg["From"] = sender_email
-    msg["To"] = to_email
+    if not api_key or not from_email:
+        print("❌ Missing RESEND_API_KEY or FROM_EMAIL")
+        return False
 
     try:
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(smtp_login, smtp_password)
-            server.sendmail(sender_email, to_email, msg.as_string())
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": from_email,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_body,
+            },
+            timeout=20,
+        )
 
-        print(f"✅ Email sent to {to_email}")
-        return True
+        if 200 <= response.status_code < 300:
+            print("✅ Email sent via Resend")
+            return True
+        else:
+            print("❌ Resend error:", response.status_code, response.text)
+            return False
 
     except Exception as e:
-        print("❌ Email error:", e)
+        print("❌ Email exception:", e)
         return False
 
 def load_json(path):
