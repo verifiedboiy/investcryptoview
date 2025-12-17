@@ -125,16 +125,36 @@
     assetName.textContent = assetSel.value;
   });
 
+  const depositAddresses = {
+    BTC: "bc1q0x93ysaw9yf2gzsj6hfxa73yvcfmqftcqywrxs",
+    ETH: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826",
+    USDT: {
+      TRC20: "THHhKVobizq64GKsgbvKBYT6E7huzvcBYM",
+      ERC20: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826"
+    },
+    USDC: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826",
+    SOL: "XFPDNN9J9tzhESkWU88fVZX5QsQdda6W9x7yefhRXdR",
+    BNB: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826"
+  };
+
   document.getElementById('makePayment').addEventListener('click', ()=>{
     const a = assetSel.value;
     const n = networkSel.value;
     const usd = parseFloat(amount.value||'0');
     if(usd<=0){ alert('Enter a valid amount'); return; }
-    const url = "{{ url_for('payment_confirmation') }}?asset=" + 
-    encodeURIComponent(a) + 
-    "&network=" + encodeURIComponent(n) + 
-    "&amount=" + encodeURIComponent(usd.toFixed(2));
-    window.location = url;
+    let address = "";
+
+if (a === "USDT") {
+  address = depositAddresses.USDT[n] || "";
+} else {
+  address = depositAddresses[a] || "";
+}
+
+const url = "{{ url_for('payment_confirmation') }}?asset=" +
+encodeURIComponent(a) +
+"&network=" + encodeURIComponent(n) +
+"&amount=" + encodeURIComponent(usd.toFixed(2)) +
+"&address=" + encodeURIComponent(address);
   });
 </script>
 </body>

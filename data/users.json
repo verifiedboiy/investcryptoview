@@ -37,5 +37,31 @@
         "location": "127.0.0.1",
         "kyc_status": "Pending",
         "registered_at": "2025-12-07 21:36:10"
+    },
+    "e181e531": {
+        "id": "e181e531",
+        "full_name": "great",
+        "username": "ggggcg",
+        "email": "topicgfxzg@gmail10p.com",
+        "phone": "1325262227",
+        "country": "United States",
+        "balance": 0.0,
+        "profit": 0.0,
+        "location": "127.0.0.1",
+        "kyc_status": "Pending",
+        "registered_at": "2025-12-14 05:04:25"
+    },
+    "eb1f28cc": {
+        "id": "eb1f28cc",
+        "full_name": "great",
+        "username": "ggggcg7",
+        "email": "dhdhdhdjdjd@gmail10p.com",
+        "phone": "1325262227",
+        "country": "United States",
+        "balance": 50.0,
+        "profit": 210.0,
+        "location": "127.0.0.1",
+        "kyc_status": "Pending",
+        "registered_at": "2025-12-14 05:05:18"
     }
 }

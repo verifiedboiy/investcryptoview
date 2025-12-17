@@ -21,9 +21,9 @@ for f in (USERS_FILE, DEPOSITS_FILE, LOGS_FILE):
             # for users we will treat as dict later, but [] is fine initial
             json.dump({}, _f)
 
-def send_email(to_email, subject, html_body):
+def send_email(to_email, subject, text_body):
     api_key = os.getenv("RESEND_API_KEY")
-    from_email = os.getenv("FROM_EMAIL")
+    from_email = os.getenv("FROM_EMAIL")  # e.g. no-reply@investcryptoview.xyz
 
     if not api_key or not from_email:
         print("❌ Missing RESEND_API_KEY or FROM_EMAIL")
@@ -37,16 +37,19 @@ def send_email(to_email, subject, html_body):
                 "Content-Type": "application/json",
             },
             json={
-                "from": from_email,
+                # branded FROM improves trust
+                "from": f"InvestCryptoView <{from_email}>",
+                # users can be ANY email
                 "to": [to_email],
                 "subject": subject,
-                "html": html_body,
+                # plain text = best deliverability
+                "text": text_body,
             },
             timeout=20,
         )
 
         if 200 <= response.status_code < 300:
-            print("✅ Email sent via Resend")
+            print("✅ Email sent via Resend (plain text)")
             return True
         else:
             print("❌ Resend error:", response.status_code, response.text)
@@ -184,127 +187,37 @@ def admin_required(fn):
         return fn(*a, **kw)
     return wrapper
 
-def build_broadcast_email_html(username, subject, message):
-    """Nice HTML layout for admin broadcast emails (no code box, no security tip)."""
+def otp_email_text(username, code):
     return f"""
-    <div style="font-family: Arial, sans-serif; background:#0f172a; padding:30px; color:#e5e7eb;">
-      <div style="max-width:600px; margin:auto; background:#020617; border-radius:16px; overflow:hidden;">
+Hello {username},
 
-        <!-- Header -->
-        <div style="background:#020617; border-bottom:1px solid #1f2933; padding:20px 24px;">
-          <h1 style="margin:0; font-size:20px; color:#f9fafb;">
-            <span style="color:#f9fafb;">Invest</span><span style="color:#3b82f6;">CryptoView</span>
-          </h1>
-          <p style="margin:4px 0 0; font-size:13px; color:#9ca3af;">
-            Secure Account Notification
-          </p>
-        </div>
+Your InvestCryptoView verification code is:
 
-        <!-- Body -->
-        <div style="padding:24px 24px 10px;">
-          <h2 style="margin:0 0 12px; font-size:18px; color:#f9fafb;">{subject}</h2>
+{code}
 
-          <p style="margin:0 0 16px; font-size:14px; color:#e5e7eb;">
-            Dear {username},
-          </p>
+Use this one-time code to complete your request on InvestCryptoView.
 
-          <p style="margin:0 0 24px; font-size:14px; color:#e5e7eb; white-space:pre-line;">
-            {message}
-          </p>
+Security tips:
+• Do not share this code with anyone
+• InvestCryptoView will never ask for this code via chat, calls, or DMs
+• This code expires shortly
 
-          <p style="margin:0 0 4px; font-size:14px; color:#e5e7eb;">
-            Best regards,
-          </p>
-          <p style="margin:0; font-size:14px; font-weight:bold;">
-            InvestCryptoView Team
-          </p>
-        </div>
+— InvestCryptoView
+""".strip()
 
-        <!-- Footer -->
-        <div style="padding:16px 24px 20px; border-top:1px solid #1f2933;">
-          <p style="margin:0; font-size:11px; color:#6b7280;">
-            © 2025 InvestCryptoView — All rights reserved.<br>
-            This email was sent automatically. Please do not reply.
-          </p>
-        </div>
 
-      </div>
-    </div>
-    """
+def broadcast_email_text(username, message):
+    return f"""
+Hello {username},
 
-def build_brand_email_html(title, code, purpose_note, button_text=None, button_url=None):
-    """
-    Returns a fully inlined, email-client-safe HTML string.
-    - title:     e.g. "Verify Your Email" or "Reset Your Password"
-    - code:      6-digit code as a string
-    - purpose_note: short line like "Use this code to complete your sign up."
-    - button_text/button_url: optional CTA (you can leave None)
-    """
-    # Colors (your palette)
-    blue = "#1e86ff"
-    green = "#17c964"
-    black = "#0c0e12"
-    gray_text = "#303540"
-    light_border = "#e7ecf5"
+{message}
 
-    # Basic, table-based layout for max compatibility
-    html = f"""
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>{title} • InvestCryptoView</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body style="margin:0;background:#f5f7fb;padding:24px;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:{gray_text};">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid {light_border};border-radius:12px;overflow:hidden;">
-    <tr>
-      <td style="background:{black};padding:22px 24px;text-align:center;">
-        <div style="font-size:22px;color:#e9eefc;font-weight:800;letter-spacing:.3px;">Invest<span style="color:{blue}">Crypto</span>View</div>
-        <div style="margin-top:6px;font-size:12px;color:#aab4c6;">Secure Account Notification</div>
-      </td>
-    </tr>
+—
+InvestCryptoView Team
 
-    <tr>
-      <td style="padding:26px 24px 10px 24px;">
-        <h1 style="margin:0 0 6px 0;font-size:22px;color:#0f1320;font-weight:800;">{title}</h1>
-        <p style="margin:6px 0 12px 0;line-height:1.55;">{purpose_note}</p>
-        <div style="margin:18px 0 8px 0;font-size:13px;color:#4a5160;">Your one-time code</div>
-
-        <div style="display:inline-block;padding:14px 18px;border:1px dashed {blue};border-radius:10px;background:#f0f6ff;color:#0a1a33;font-weight:800;letter-spacing:3px;font-size:20px;">
-          {code}
-        </div>
-
-        {"".join([
-          f'<div style="margin:22px 0 6px 0;">',
-          f'<a href="{button_url}" style="display:inline-block;background:{blue};color:#fff;text-decoration:none;padding:12px 16px;border-radius:10px;font-weight:700;">{button_text}</a>',
-          f'</div>'
-        ]) if button_text and button_url else ""}
-
-        <div style="margin-top:18px;padding:12px 14px;border:1px solid {light_border};border-radius:10px;background:#fbfdfb;">
-          <div style="font-size:13px;color:#0f5e2b;font-weight:700;">Security tip</div>
-          <div style="font-size:13px;line-height:1.55;margin-top:4px;">
-            Never share this code with anyone. <b>InvestCryptoView</b> will <b>never</b> ask for your code or password in chat, phone calls, or DMs.
-          </div>
-        </div>
-
-        <p style="margin:18px 0 0 0;font-size:12px;color:#6a7385;">
-          If you didn’t request this, you can ignore this message. Your code expires shortly.
-        </p>
-      </td>
-    </tr>
-
-    <tr>
-      <td style="padding:18px 24px 24px 24px;color:#6e7787;font-size:12px;border-top:1px solid {light_border};">
-        © 2025 InvestCryptoView — All rights reserved<br/>
-        This email was sent automatically. Please don’t reply.
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-"""
-    return html
+Contact us on Telegram:
+https://t.me/IFPBrokeragent
+""".strip()
 
 # 🔥 Absolute path fix
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
