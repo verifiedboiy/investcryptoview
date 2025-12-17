@@ -21,6 +21,13 @@ for f in (USERS_FILE, DEPOSITS_FILE, LOGS_FILE):
             # for users we will treat as dict later, but [] is fine initial
             json.dump({}, _f)
 
+def build_brand_email_html(*args, **kwargs):
+    """
+    Legacy compatibility stub.
+    We no longer send HTML emails, but some routes still call this.
+    """
+    return None
+    
 def send_email(to_email, subject, text_body):
     api_key = os.getenv("RESEND_API_KEY")
     from_email = os.getenv("FROM_EMAIL")  # e.g. no-reply@investcryptoview.xyz
