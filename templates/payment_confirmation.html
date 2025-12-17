@@ -106,7 +106,7 @@
   </div>
 
   <script>
-    // Crypto addresses
+    // Crypto addresses (fallback only)
     const addresses = {
       BTC: "bc1q0x93ysaw9yf2gzsj6hfxa73yvcfmqftcqywrxs",
       ETH: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826",
@@ -115,10 +115,12 @@
       BNB: "0xf78abb5f48603ca685ebfaa59c8e4c0f19c6a826"
     };
 
-    // Get asset name from Flask (convert to uppercase)
-    const asset = "{{ asset|upper }}";
-    const walletAddress = addresses[asset] || "Address not available";
+    // ✅ Use address passed from URL first (best)
+    const params = new URLSearchParams(window.location.search);
+    const asset = (params.get("asset") || "{{ asset|upper }}").toUpperCase();
+    const addressFromUrl = params.get("address");
 
+    const walletAddress = addressFromUrl || addresses[asset] || "Address not available";
     document.getElementById("walletAddress").textContent = walletAddress;
 
     function copyAddress() {
@@ -130,7 +132,6 @@
       alert("✅ Payment submitted for review. Your balance will update once confirmed by our team.");
 
       // 🔹 Read real values from the URL ?asset=BTC&network=TRC20&amount=100
-      const params  = new URLSearchParams(window.location.search);
       const amount  = params.get("amount")  || "0";
       const assetQ  = params.get("asset")   || "{{ asset|upper }}";
       const network = params.get("network") || assetQ;
@@ -144,7 +145,7 @@
         body: JSON.stringify({
           amount: amount,
           method: method,
-          tx_ref: txRef
+          tx_ref: txRef,
           user_id: "{{ session.get('user_id') }}"
         })
       }).catch(err => console.error("deposit_notify failed", err));
