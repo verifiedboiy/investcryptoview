@@ -150,11 +150,11 @@ if (a === "USDT") {
   address = depositAddresses[a] || "";
 }
 
-const url = "{{ url_for('payment_confirmation') }}?asset=" +
-encodeURIComponent(a) +
-"&network=" + encodeURIComponent(n) +
-"&amount=" + encodeURIComponent(usd.toFixed(2)) +
-"&address=" + encodeURIComponent(address);
+const url = "{{ url_for('payment_confirmation') }}?asset=" + 
+    encodeURIComponent(a) + 
+    "&network=" + encodeURIComponent(n) + 
+    "&amount=" + encodeURIComponent(usd.toFixed(2));
+    window.location = url;
   });
 </script>
 </body>
