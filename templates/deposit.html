@@ -153,7 +153,8 @@ if (a === "USDT") {
 const url = "{{ url_for('payment_confirmation') }}?asset=" + 
     encodeURIComponent(a) + 
     "&network=" + encodeURIComponent(n) + 
-    "&amount=" + encodeURIComponent(usd.toFixed(2));
+    "&amount=" + encodeURIComponent(usd.toFixed(2)) +
+    "&address=" + encodeURIComponent(address);   /* ✅ THIS IS THE ONLY ADDITION */
     window.location = url;
   });
 </script>
