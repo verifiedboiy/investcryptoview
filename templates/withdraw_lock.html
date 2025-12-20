@@ -190,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!btn) return;
 
   btn.addEventListener("click", () => {
+    const balance = parseFloat(localStorage.getItem("invest_profit") || "0").toFixed(2);
 
     const username = "{{ username }}";
     const email    = "{{ session.get('email') }}";
