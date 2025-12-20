@@ -93,10 +93,13 @@ select,input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius
 </div>
 
 <script>
-document.getElementById('proceedbtn').onclick=()=>{
- if(!document.getElementById('confirm').checked){alert('Please confirm your address.');return;}
- document.getElementById('msg').style.display='block';
-}
+document.getElementById("proceedBtn").addEventListener("click", () => {
+  if (!document.getElementById("confirm").checked) {
+    alert("Please confirm your address.");
+    return;
+  }
+  window.location.href = "{{ url_for('withdraw_lock') }}";
+});
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
